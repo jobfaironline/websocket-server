@@ -17,7 +17,6 @@ export class Controller {
         this.router.post("/notification", async (req, res, next) => {
             const {notificationId} = req.body;
             const notification = await this.notificationMessageRepository.getNotificationById(notificationId);
-            console.log(notification)
             self.webSocketNotifier.send(notification.userId, JSON.stringify(notification));
             res.status(200).send();
         });

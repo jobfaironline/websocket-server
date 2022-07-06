@@ -55,7 +55,7 @@ export class NotifierService {
     async send(receiverId, message) {
         console.log("ws sending message");
         const data = await this.jobHubConnectionsRepository.getNotificationByUserId(receiverId);
-        console.log(data)
+        if (data === undefined) return;
         const connection = this.connections.get(data.connectionId);
         connection?.send(JSON.stringify(message));
     }
