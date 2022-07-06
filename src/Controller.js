@@ -13,19 +13,9 @@ export class Controller {
     }
 
     _sendNotification() {
-        function delay(delayInms) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    resolve(2);
-                }, delayInms);
-            });
-        }
-
-
         const self = this;
         this.router.post("/notification", async (req, res, next) => {
             const {notificationId} = req.body;
-            await delay(1000);
             const notification = await this.notificationMessageRepository.getNotificationById(notificationId);
             console.log(notification)
             self.webSocketNotifier.send(notification.userId, JSON.stringify(notification));
