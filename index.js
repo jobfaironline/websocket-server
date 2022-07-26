@@ -33,8 +33,8 @@ start();
 
 function exitHandler(options, exitCode) {
   jobHubConnectionsRepository.deleteAllConnection();
-  if (options.cleanup) logger.info("Server closed");
-  if (exitCode || exitCode === 0) logger.info("Server exit: ", exitCode);
+  if (options.cleanup) console.log("Server closed");
+  if (exitCode || exitCode === 0) console.log("Server exit: ", exitCode);
   if (options.exit) {
     setTimeout(() => {
       process.exit();

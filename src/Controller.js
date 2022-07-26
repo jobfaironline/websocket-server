@@ -9,6 +9,14 @@ const NOTIFICATION_TYPE = {
   5: "KICK_USER",
 };
 
+async function delay(delayInms) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(2);
+    }, delayInms);
+  });
+}
+
 export class Controller {
   constructor(webSocketNotifier, notificationMessageRepository) {
     this.notificationMessageRepository = notificationMessageRepository;
@@ -25,12 +33,26 @@ export class Controller {
     const self = this;
     this.router.post("/notification", async (req, res, next) => {
       const { notificationId } = req.body;
-      const notification =
+      let notification =
         await this.notificationMessageRepository.getNotificationById(
           notificationId
         );
-      notification.notificationType =
-        NOTIFICATION_TYPE[notification.notificationType];
+      let count = 0;
+      while (notification === undefined && count < 5) {
+        await delay(100);
+        notification =
+          await this.notificationMessageRepository.getNotificationById(
+            notificationId
+          );
+        count++;
+      }
+      if (notification === undefined) return;
+      if (
+        notification.notificationType !== undefined &&
+        notification.notificationType !== null
+      )
+        notification.notificationType =
+          NOTIFICATION_TYPE[notification?.notificationType];
       self.webSocketNotifier.send(notification.userId, notification);
       res.status(200).send();
     });
