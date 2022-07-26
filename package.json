@@ -10,5 +10,8 @@
     "uuid": "^8.3.2",
     "ws": "^8.8.0"
   },
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  }
 }
