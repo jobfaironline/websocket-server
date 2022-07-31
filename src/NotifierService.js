@@ -20,26 +20,30 @@ export class NotifierService {
       console.log("ws upgrade");
       const token = url.parse(request.url, true).query.token;
       const bearer = "Bearer " + token;
-      const response = await fetch(
-        "http://localhost:5000/api/v1/accounts/get-info",
-        {
-          method: "GET",
-          withCredentials: true,
-          credentials: "include",
-          headers: {
-            Authorization: bearer,
-            "X-FP-API-KEY": "iphone", //it can be iPhone or your any other attribute
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const json = await response.json();
-      if (json.id) {
-        this.server.handleUpgrade(request, socket, head, (ws) =>
-          this.server.emit("connection", json.id, ws)
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/v1/accounts/get-info",
+          {
+            method: "GET",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+              Authorization: bearer,
+              "X-FP-API-KEY": "iphone", //it can be iPhone or your any other attribute
+              "Content-Type": "application/json",
+            },
+          }
         );
-      } else {
-        socket.destroy();
+        const json = await response.json();
+        if (json.id) {
+          this.server.handleUpgrade(request, socket, head, (ws) =>
+            this.server.emit("connection", json.id, ws)
+          );
+        } else {
+          socket.destroy();
+        }
+      } catch (e) {
+        console.error(e);
       }
     });
   }
